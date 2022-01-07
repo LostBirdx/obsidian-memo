@@ -3,8 +3,11 @@ import { createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-
 import appStore from "../stores/appStore";
 import { InsertAfter } from "../memos";
 
+//这个文件好像全程都是在操作markdown啊，没有涉及到那个渲染文本的部分。
+
 // https://stackoverflow.com/questions/3115150/how-to-escape-regular-expression-special-characters-using-javascript
 export async function escapeRegExp(text : any) {
+    
     return await text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
   
@@ -27,7 +30,8 @@ export function getLinesInString(input: string) {
 export async function waitForInsert(MemoContent: string) : Promise<Model.Memo>{
     // const plugin = window.plugin;
     const { vault } = appStore.getState().dailyNotesState.app;
-    const removeEnter = MemoContent.replace(/\n/g, "<br>")
+    const removeEnter = MemoContent.replace(/\n/g, "<br>") //把所有的\n换成<br>因为markdown不识别\n
+    
     const date = moment();
     const timeHour = date.format('HH');
     const timeMinute = date.format('mm');
@@ -66,15 +70,15 @@ export async function insertAfterHandler(targetString: string, formatted: string
     // const targetString: string = plugin.settings.InsertAfter;
     //eslint-disable-next-line
     const targetRegex = new RegExp(`\s*${await escapeRegExp(targetString)}\s*`);
-    const fileContentLines: string[] = getLinesInString(fileContent);
-  
+
+    const fileContentLines: string[] = getLinesInString(fileContent);//fileContent是整个dailynote的内容
+    
     const targetPosition = fileContentLines.findIndex(line => targetRegex.test(line));
-    const targetNotFound = targetPosition === -1;
+    const targetNotFound = targetPosition === -1;//三个等号是什么东西啊。
     if (targetNotFound) {
         // if (this.choice.insertAfter?.createIfNotFound) {
         //     return await createInsertAfterIfNotFound(formatted);
         // }
-  
         console.log("unable to find insert after line in file.")
     }
 

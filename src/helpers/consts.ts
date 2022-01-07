@@ -29,7 +29,7 @@ export const IMAGE_URL_REG = /([^\s<\\*>']+\.(jpeg|jpg|gif|png|svg))(\]\])?(\))?
 // Markdown 内部图片正则 
 // Group 1 为图片
 // Group 2 为缩放比例
-export const MARKDOWN_URL_REG = /(!\[([^\]]*)(\|)?(.*?)\]\((.*?)("(?:.*[^"])")?\s*\))/g;
+export const MARKDOWN_URL_REG = /\[([\s\S]*?)\]\(([\s\S]*?)\)/g;
 
 // 检测是否为外部图片
 //eslint-disable-next-line

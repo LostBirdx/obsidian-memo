@@ -112,6 +112,7 @@ const Memo: React.FC<Props> = (props: Props) => {
   let allMarkdownLink: string | any[] = [];
   let allInternalLink = [] as any[];
   if(IMAGE_URL_REG.test(memo.content)){
+    console.log("image!")
     let allExternalImageUrls = [] as string[];
     let anotherExternalImageUrls = [] as string[];
     if(MARKDOWN_URL_REG.test(memo.content)){
@@ -285,13 +286,15 @@ const Memo: React.FC<Props> = (props: Props) => {
 
 export function formatMemoContent(content: string, memoid?: string) {
   content = encodeHtml(content);
+  console.log(content);
   content = parseRawTextToHtml(content)
     .split("<br>")
     .map((t) => {
       return `<p>${t !== "" ? t : "<br>"}</p>`;
     })
     .join("");
-
+  
+  console.log(content);
   const { shouldUseMarkdownParser, shouldHideImageUrl } = globalStateService.getState();
 
   if (shouldUseMarkdownParser) {
@@ -299,7 +302,7 @@ export function formatMemoContent(content: string, memoid?: string) {
   }
 
   if (shouldHideImageUrl) {
-    content = content.replace(WIKI_IMAGE_URL_REG, "").replace(MARKDOWN_URL_REG, "").replace(IMAGE_URL_REG,"");
+    content = content.replace(WIKI_IMAGE_URL_REG, "").replace(IMAGE_URL_REG,"");
   }
 
   // 中英文之间加空格
@@ -309,11 +312,25 @@ export function formatMemoContent(content: string, memoid?: string) {
   //     .replace(/([A-Za-z0-9?.,;[\]]+)([\u4e00-\u9fa5])/g, "$1 $2");
   // }
 
+  //在这呢，在这处理的！！！！
+  // console.log(content);
+  // console.log(TAG_REG.test(content));
+  // console.log(FIRST_TAG_REG.test(content));
+  // console.log(MARKDOWN_URL_REG.test(content));
+  // content = content
+  // .replace(TAG_REG, "<span class='tag-span'>#$1</span>")
+  // .replace(FIRST_TAG_REG, "<span class='tag-span'>#$2</span>")
+  // .replace(MARKDOWN_URL_REG, "<a class='link' target='_blank' rel='noreferrer' href='$2'>$1</a>")
+  // .replace(MEMO_LINK_REG, "<span class='memo-link-text' data-value='$2'>$1</span>");
+
+
   content = content
     .replace(TAG_REG, "<span class='tag-span'>#$1</span>")
     .replace(FIRST_TAG_REG, "<span class='tag-span'>#$2</span>")
-    .replace(LINK_REG, "<a class='link' target='_blank' rel='noreferrer' href='$1'>$1</a>")
+    .replace(MARKDOWN_URL_REG, "<a class='link' target='_blank' rel='noreferrer' href='$2'>$1</a>")
     .replace(MEMO_LINK_REG, "<span class='memo-link-text' data-value='$2'>$1</span>");
+  
+  // console.log(content);
 
   const tempDivContainer = document.createElement("div");
   tempDivContainer.innerHTML = content;

@@ -13,6 +13,7 @@ import React from "react";
 import { TFile, Vault } from "obsidian";
 import appStore from "../stores/appStore";
 
+//这个组件是READ功能用的，用来显示那个对话框的。
 interface LinkedMemo extends FormattedMemo {
   dateStr: string;
 }

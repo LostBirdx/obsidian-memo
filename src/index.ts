@@ -21,8 +21,10 @@ export default class MemosPlugin extends Plugin {
   async onload(): Promise<void> {
 
     this.registerView(
-      MEMOS_VIEW_TYPE,(leaf) => new Memos(leaf, this),
+      MEMOS_VIEW_TYPE,(leaf) => new Memos(leaf,this),
     );
+
+
 
     this.addSettingTab(new MemosSettingTab(this.app, this));
     await this.loadSettings();
@@ -33,8 +35,11 @@ export default class MemosPlugin extends Plugin {
       this.openMemos();
 		});
 
-    if(appHasDailyNotesPluginLoaded()){
-      new Notice("Check if you opened Daily Notes Plugin")
+    if(!appHasDailyNotesPluginLoaded()){
+      new Notice("You have not opened Daily Notes Plugin!\nPlease open it.")
+    }
+    else{
+      new Notice("You have opened Daily Notes Plugin!\nEnjoy the obsidian-memo plugin!");
     }
 
     this.addCommand({
@@ -97,12 +102,23 @@ export default class MemosPlugin extends Plugin {
     const { view } = this.app.workspace.activeLeaf;
     const workspace = this.app.workspace;
     workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
-    if (!(view instanceof FileView)) {
-      await workspace.getLeaf(false).setViewState({type: MEMOS_VIEW_TYPE});
-    }else{
-      await workspace.getLeaf(true).setViewState({type: MEMOS_VIEW_TYPE});
-    }
+    await workspace.getLeaf(false).setViewState({type: MEMOS_VIEW_TYPE}); //这个false是什么意思？false就是直接替换打开整个目录，true就是在右边分屏这样子。getleaf(false)就是直接替换当前的leaf
+
     workspace.revealLeaf(workspace.getLeavesOfType(MEMOS_VIEW_TYPE)[0]);
+
+
+
+    // if (!(view instanceof FileView)) { //如果有一个view了那就进入else了。
+    // await workspace.getLeaf(false).setViewState({type: MEMOS_VIEW_TYPE}); //这个false是什么意思？
+    // console.log("1:",!(view instanceof FileView));
+    // }
+    // else{
+    //   await workspace.getLeaf(true).setViewState({type: MEMOS_VIEW_TYPE});
+    //   console.log("2:",!(view instanceof FileView));
+    // }
+    // workspace.revealLeaf(workspace.getLeavesOfType(MEMOS_VIEW_TYPE)[0]);
+
+
     // const viewType = view.getViewType();
     // let leaf;
     // if (!(view instanceof FileView)) {

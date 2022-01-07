@@ -78,6 +78,7 @@ export async function deleteForever(deletedMemoid: string): Promise<void> {
                 const line = fileLines[lineNum-1];
                 if((/^- (.+)$/.test(line))){
                     // const id = extractIDfromText(fileLines[i]);
+                    console.log((/^- (.+)$/.test(line)));
                     const newFileContent = fileContents.replace(line, "");
                     await vault.modify(deleteFile, newFileContent);
                 }
@@ -142,7 +143,7 @@ export const sendMemoToDelete = async (memoContent: string): Promise<any> =>{
     const absolutePath = filePath + "/delete.md";
 
     const deleteFile = metadataCache.getFirstLinkpathDest("" , absolutePath);
-
+    console.log(deleteFile);
     if(deleteFile instanceof TFile){
         const fileContents = await vault.cachedRead(deleteFile);
         const fileLines = getAllLinesFromFile(fileContents);
@@ -161,7 +162,8 @@ export const sendMemoToDelete = async (memoContent: string): Promise<any> =>{
         return deleteDate
     }else{
         const deleteFilePath = normalizePath(absolutePath);
-        const file = await createdeleteFile(deleteFilePath);
+        console.log(deleteFilePath);
+        const file = await createdeleteFile(deleteFilePath); //这个里面，如果delefile已经存在就会创建失败，然后抛出异常。
         // const fileContents = await vault.cachedRead(deleteFile);
         // const fileLines = getAllLinesFromFile(fileContents);
         const date = moment();
@@ -170,8 +172,8 @@ export const sendMemoToDelete = async (memoContent: string): Promise<any> =>{
         const deleteDateID = date.format("YYYYMMDDHHmmss") + lineNum;
         
         await createDeleteMemoInFile(file, "" , memoContent , deleteDateID);
-
-        return deleteDate
+        // console.log("12");
+        return deleteDate;
     }
 }
 
@@ -186,21 +188,34 @@ export const createDeleteMemoInFile = async (file: TFile, fileContent: string, m
         newContent = fileContent + "\n" + memoContent + " deletedAt: " + deleteDate;
     }
     
-    await vault.modify(file, newContent);
-
+    await vault.append(file, "\n"+newContent);
+    // console.log(newContent);
     return true;
 }
 
 
 export const createdeleteFile = async (path: string): Promise<TFile> => {
     const { vault } = appStore.getState().dailyNotesState.app;
-
+    console.log(path);
     try {
-        const createdFile = await vault.create(path, "");
-        return createdFile;
+        //修复这个bug的关键就是需要一个根据路径返回TFile对象的API
+        if(!vault.getAbstractFileByPath(path))
+        {
+            const createdFile = await vault.create(path, "");
+            console.log(createdFile);
+            return createdFile; 
+        }
+        else
+        {
+            const createdFile = vault.getAbstractFileByPath(path);
+            console.log(createdFile);
+            return createdFile;
+        }
+
+              
     }
     catch (err) {
-        console.error(`Failed to create file: '${path}'`, err);
+        console.error(`Failed to create file: '${path}'`, err); //这里的bug是因为文件已经存在了。
         new Notice("Unable to create new file.");
     }
 }
