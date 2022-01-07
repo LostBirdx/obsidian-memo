@@ -7,6 +7,9 @@ import Only from "../common/OnlyWhen";
 import "../../less/editor.less";
 import React from "react";
 
+//这个是处理输入的组件
+
+
 export interface EditorRefActions {
   element: HTMLTextAreaElement;
   focus: FunctionType;

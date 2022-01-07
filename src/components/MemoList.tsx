@@ -27,7 +27,7 @@ const MemoList: React.FC<Props> = () => {
     showMemoFilter || queryId
       ? memos.filter((memo) => {
           let shouldShow = true;
-
+          //这一段是解决过滤的问题的。就是按时间和标签来过滤的功能
           const query = queryService.getQueryById(queryId);
           if (query) {
             const filters = JSON.parse(query.querystring) as Filter[];

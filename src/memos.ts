@@ -1,4 +1,4 @@
-import{ WorkspaceLeaf , ItemView, HoverPopover } from "obsidian";
+import{ WorkspaceLeaf , ItemView, HoverPopover, MarkdownPreviewView, MarkdownEditView } from "obsidian";
 import { MEMOS_VIEW_TYPE } from './constants';
 import React from "react";
 import ReactDOM from "react-dom";
